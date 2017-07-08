@@ -1089,6 +1089,13 @@ func (scope *Scope) createJoinTable(field *StructField) {
 }
 
 func (scope *Scope) createTable() *Scope {
+	defer func() {
+		for k, cb := range createTableCallbacks {
+			if k == scope.TableName() {
+				cb()
+			}
+		}
+	}()
 	var tags []string
 	var primaryKeys []string
 	var primaryKeyInColumnType = false

@@ -81,6 +81,7 @@ type StructField struct {
 	Struct          reflect.StructField
 	IsForeignKey    bool
 	Relationship    *Relationship
+	FieldRef        *FieldRef
 }
 
 func (structField *StructField) clone() *StructField {
@@ -98,6 +99,7 @@ func (structField *StructField) clone() *StructField {
 		Struct:          structField.Struct,
 		IsForeignKey:    structField.IsForeignKey,
 		Relationship:    structField.Relationship,
+		FieldRef:        structField.FieldRef,
 	}
 
 	for key, value := range structField.TagSettings {
@@ -551,6 +553,8 @@ func (scope *Scope) GetModelStruct() *ModelStruct {
 			} else {
 				field.DBName = ToDBName(fieldStruct.Name)
 			}
+
+			field.checkFieldRef()
 
 			modelStruct.StructFields = append(modelStruct.StructFields, field)
 		}

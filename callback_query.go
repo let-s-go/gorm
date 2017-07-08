@@ -8,6 +8,7 @@ import (
 
 // Define callbacks for querying
 func init() {
+	DefaultCallback.Query().Register("gorm:refload", refloadCallback)
 	DefaultCallback.Query().Register("gorm:query", queryCallback)
 	DefaultCallback.Query().Register("gorm:preload", preloadCallback)
 	DefaultCallback.Query().Register("gorm:after_query", afterQueryCallback)

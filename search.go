@@ -18,6 +18,7 @@ type search struct {
 	omits            []string
 	orders           []interface{}
 	preload          []searchPreload
+	refload          []string
 	offset           interface{}
 	limit            interface{}
 	group            string

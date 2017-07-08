@@ -389,12 +389,14 @@ func (s *DB) UpdateColumns(values interface{}) *DB {
 }
 
 // Save update value in database, if the value doesn't have primary key, will insert it
-func (s *DB) Save(value interface{}) *DB {
+func (s *DB) Save(value interface{}, isCreate ...bool) *DB {
 	scope := s.clone().NewScope(value)
 	if !scope.PrimaryKeyZero() {
 		newDB := scope.callCallbacks(s.parent.callbacks.updates).db
-		if newDB.Error == nil && newDB.RowsAffected == 0 {
-			return s.New().FirstOrCreate(value)
+		if len(isCreate) > 0 && isCreate[0] {
+			if newDB.Error == nil && newDB.RowsAffected == 0 {
+				return s.New().FirstOrCreate(value)
+			}
 		}
 		return newDB
 	}
