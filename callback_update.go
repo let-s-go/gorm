@@ -64,7 +64,7 @@ func updateCallback(scope *Scope) {
 			}
 		} else {
 			for _, field := range scope.Fields() {
-				if scope.changeableField(field) {
+				if scope.changeableField(field) && field.Name != "CreatedAt" && field.Name != "DeletedAt" {
 					if !field.IsPrimaryKey && field.IsNormal {
 						sqls = append(sqls, fmt.Sprintf("%v = %v", scope.Quote(field.DBName), scope.AddToVars(field.Field.Interface())))
 					} else if relationship := field.Relationship; relationship != nil && relationship.Kind == "belongs_to" {
