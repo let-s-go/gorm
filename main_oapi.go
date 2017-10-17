@@ -28,6 +28,24 @@ func (s *DB) GetCount(where interface{}, args ...interface{}) int {
 	return cnt
 }
 
+// Find find records that match given conditions
+func (s *DB) Page(out interface{}, where ...interface{}) (cnt int64, err error) {
+	if s.search != nil && fmt.Sprint(s.search.offset) == "0" {
+		limit := s.search.limit
+		s.search.limit = nil
+		s.search.offset = nil
+		if err := s.Model(out).Count(&cnt).Error; err != nil {
+			return 0, err
+		}
+		if cnt == 0 {
+			return 0, nil
+		}
+		s.search.limit = limit
+		s.search.offset = 0
+	}
+	return cnt, s.clone().NewScope(out).inlineCondition(where...).callCallbacks(s.parent.callbacks.queries).db.Error
+}
+
 func (s *DB) DoTransaction(do func(dbc *DB) error) (err error) {
 	dbc := s.Begin()
 	defer func() {
