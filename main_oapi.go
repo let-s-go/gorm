@@ -28,10 +28,11 @@ func (s *DB) GetCount(where interface{}, args ...interface{}) int {
 	return cnt
 }
 
-// Find find records that match given conditions
+// Page find records that match given conditions
 func (s *DB) Page(out interface{}, where ...interface{}) (cnt int64, err error) {
-	if s.search != nil && fmt.Sprint(s.search.offset) == "0" {
+	if s.search != nil /*&& fmt.Sprint(s.search.offset) == "0"*/ {
 		limit := s.search.limit
+		offset := s.search.offset
 		s.search.limit = nil
 		s.search.offset = nil
 		if err := s.Model(out).Count(&cnt).Error; err != nil {
@@ -41,7 +42,7 @@ func (s *DB) Page(out interface{}, where ...interface{}) (cnt int64, err error) 
 			return 0, nil
 		}
 		s.search.limit = limit
-		s.search.offset = 0
+		s.search.offset = offset
 	}
 	return cnt, s.clone().NewScope(out).inlineCondition(where...).callCallbacks(s.parent.callbacks.queries).db.Error
 }
