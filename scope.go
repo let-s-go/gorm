@@ -358,6 +358,22 @@ func (scope *Scope) Exec() *Scope {
 	return scope
 }
 
+// Exec perform generated SQL
+func (scope *Scope) DBExec() (sql.Result, error) {
+	defer scope.trace(NowFunc())
+
+	if !scope.HasError() {
+		result, err := scope.SQLDB().Exec(scope.SQL, scope.SQLVars...)
+		if scope.Err(err) == nil {
+			if count, err := result.RowsAffected(); scope.Err(err) == nil {
+				scope.db.RowsAffected = count
+			}
+		}
+		return result, err
+	}
+	return nil, scope.db.Error
+}
+
 // Set set value by name
 func (scope *Scope) Set(name string, value interface{}) *Scope {
 	scope.db.InstantSet(name, value)

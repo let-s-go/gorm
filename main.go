@@ -429,6 +429,15 @@ func (s *DB) Exec(sql string, values ...interface{}) *DB {
 	return scope.Exec().db
 }
 
+// Exec execute raw sql
+func (s *DB) DBExec(sql string, values ...interface{}) (sql.Result, error) {
+	scope := s.clone().NewScope(nil)
+	generatedSQL := scope.buildWhereCondition(map[string]interface{}{"query": sql, "args": values})
+	generatedSQL = strings.TrimSuffix(strings.TrimPrefix(generatedSQL, "("), ")")
+	scope.Raw(generatedSQL)
+	return scope.DBExec()
+}
+
 // Model specify the model you would like to run db operations
 //    // update all users's name to `hello`
 //    db.Model(&User{}).Update("name", "hello")
