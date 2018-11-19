@@ -11,7 +11,7 @@ type SQLCommon interface {
 }
 
 type sqlDb interface {
-	Begin() (*sql.Tx, error)
+	Begin() (sqlTx, error)
 }
 
 type sqlTx interface {

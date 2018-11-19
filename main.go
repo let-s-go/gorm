@@ -58,7 +58,11 @@ func Open(dialect string, args ...interface{}) (db *DB, err error) {
 			driver = value
 			source = args[1].(string)
 		}
-		dbSQL, err = sql.Open(driver, source)
+		var db *sql.DB
+		db, err = sql.Open(driver, source)
+		if err == nil {
+			dbSQL = &SqlDB{DB: db}
+		}
 	case SQLCommon:
 		dbSQL = value
 	}
@@ -106,8 +110,8 @@ func (s *DB) Close() error {
 // DB get `*sql.DB` from current connection
 // If the underlying database connection is not a *sql.DB, returns nil
 func (s *DB) DB() *sql.DB {
-	db, _ := s.db.(*sql.DB)
-	return db
+	db, _ := s.db.(*SqlDB)
+	return db.DB
 }
 
 // CommonDB return the underlying `*sql.DB` or `*sql.Tx` instance, mainly intended to allow coexistence with legacy non-GORM code.
