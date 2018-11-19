@@ -47,7 +47,7 @@ func (tx *SqlTx) Begin() (sqlTx, error) {
 	if err != nil {
 		return nil, err
 	}
-	id := strings.Replace(uid.String(), "-", "", -1)
+	id := "a" + strings.Replace(uid.String(), "-", "", -1)
 
 	sql := "savepoint " + id
 	_, err = tx.Exec(sql)
