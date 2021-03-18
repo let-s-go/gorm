@@ -43,14 +43,10 @@ type SqlTx struct {
 }
 
 func (tx *SqlTx) Begin() (sqlTx, error) {
-	uid, err := uuid.NewV4()
-	if err != nil {
-		return nil, err
-	}
-	id := "a" + strings.Replace(uid.String(), "-", "", -1)
+	id := "a" + strings.Replace(uuid.NewV4().String(), "-", "", -1)
 
 	sql := "savepoint " + id
-	_, err = tx.Exec(sql)
+	_, err := tx.Exec(sql)
 	if err != nil {
 		return nil, err
 	}
